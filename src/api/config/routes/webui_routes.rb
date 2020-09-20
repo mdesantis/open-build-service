@@ -373,4 +373,15 @@ OBSApi::Application.routes.draw do
       end
     end
   end
+
+  resource :watchlist, only: [] do
+    resources :items, only: [], controller: 'webui/watchlist/items' do
+      collection do
+        resource :by_project_name,
+                 only: [:create, :destroy],
+                 as: 'items_by_project_name',
+                 controller: 'webui/watchlist/items/by_project_name'
+      end
+    end
+  end
 end

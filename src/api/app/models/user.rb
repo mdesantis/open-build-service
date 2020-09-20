@@ -3,6 +3,7 @@ require 'api_error'
 
 class User < ApplicationRecord
   include CanRenderModel
+  include User::WatchlistProjectsConcern
 
   # Keep in sync with states defined in db/schema.rb
   STATES = ['unconfirmed', 'confirmed', 'locked', 'deleted', 'subaccount'].freeze
@@ -11,9 +12,19 @@ class User < ApplicationRecord
   # disable validations because there can be users which don't have a bcrypt
   # password yet. this is for backwards compatibility
   has_secure_password validations: false
-
   has_many :watched_projects, dependent: :destroy, inverse_of: :user
-  has_many :watchlist_items, dependent: :destroy, class_name: 'Watchlist::Item'
+  has_many :watchlist_items, dependent: :destroy, class_name: 'Watchlist::Item' do
+    def join_projects
+      watchlist_item_table = Watchlist::Item.arel_table
+      project_table = Project.arel_table
+
+      joins(
+        watchlist_item_table.join(project_table).on(
+          watchlist_item_table[:watchable_id].eq(project_table[:id])
+        ).join_sources
+      )
+    end
+  end
   has_many :watchlist_projects, through: :watchlist_items, source: :watchable, source_type: 'Project'
   has_many :groups_users, inverse_of: :user
   has_many :roles_users, inverse_of: :user
