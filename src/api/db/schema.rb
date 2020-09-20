@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_07_03_110429) do
+ActiveRecord::Schema.define(version: 2020_09_20_142208) do
 
   create_table "architectures", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC", force: :cascade do |t|
     t.string "name", null: false, collation: "utf8_general_ci"
@@ -1055,6 +1055,16 @@ ActiveRecord::Schema.define(version: 2020_07_03_110429) do
     t.index ["user_id"], name: "watched_projects_users_fk_1"
   end
 
+  create_table "watchlist_items", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.bigint "watchable_id", null: false
+    t.string "watchable_type", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id", "watchable_id", "watchable_type"], name: "index_watchlist_items_on_user_id_and_watchable", unique: true
+    t.index ["watchable_type", "watchable_id"], name: "index_watchlist_items_on_watchable_type_and_watchable_id"
+  end
+
   add_foreign_key "attrib_allowed_values", "attrib_types", name: "attrib_allowed_values_ibfk_1"
   add_foreign_key "attrib_default_values", "attrib_types", name: "attrib_default_values_ibfk_1"
   add_foreign_key "attrib_issues", "attribs", name: "attrib_issues_ibfk_1"
@@ -1148,4 +1158,5 @@ ActiveRecord::Schema.define(version: 2020_07_03_110429) do
   add_foreign_key "tokens", "users", name: "tokens_ibfk_1"
   add_foreign_key "user_registrations", "users", name: "user_registrations_ibfk_1"
   add_foreign_key "watched_projects", "users", name: "watched_projects_ibfk_1"
+  add_foreign_key "watchlist_items", "users"
 end

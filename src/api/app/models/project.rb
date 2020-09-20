@@ -53,6 +53,8 @@ class Project < ApplicationRecord
 
   has_many :messages, as: :db_object, dependent: :delete_all
   has_many :watched_projects, dependent: :destroy, inverse_of: :project
+  has_many :watchlist_items, as: :watchable, dependent: :destroy, class_name: 'Watchlist::Item'
+  has_many :watchlist_users, through: :watchlist_items, source: :user
 
   # Direct links between projects (not expanded ones)
   has_many :linking_to, -> { order(:position) }, class_name: 'LinkedProject', foreign_key: :db_project_id, dependent: :delete_all
