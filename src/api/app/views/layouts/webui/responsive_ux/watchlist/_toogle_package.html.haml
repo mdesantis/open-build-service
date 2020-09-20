@@ -1,0 +1,14 @@
+.nav-item.pb-2.mb-4.border-bottom.border-gray-500
+  .h6.text-word-break-all.text-light Package #{@watchable_record.name}
+
+  - if @watchlist_item
+    = button_to watchlist_item_path(@watchlist_item), { method: :delete, remote: true, form_class: 'button_link_to' } do
+      %p.mb-0.text-light
+        %i.fas.fa-times-circle
+        %span Remove this package from Watchlist
+  - else
+    - new_watchlist_item_params = { watchlist_item: { watchable_id: @watchable_record.id.to_s, watchable_type: @watchable_record.class } }
+    = button_to(watchlist_items_path, { method: :post, remote: true, params: new_watchlist_item_params, form_class: 'button_link_to' }) do
+      %p.mb-0.text-light
+        %i.fas.fa-plus-circle
+        %span Watch this package

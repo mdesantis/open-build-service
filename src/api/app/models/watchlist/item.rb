@@ -1,13 +1,23 @@
 class Watchlist::Item < ApplicationRecord
   self.table_name = 'watchlist_items'
 
-  WATCHABLE_TYPES = %w[Project].freeze
+  WATCHABLE_TYPES = %w[Package Project].freeze
 
   belongs_to :user, optional: false
   belongs_to :watchable, polymorphic: true, optional: false
 
   validates :user_id, uniqueness: { scope: [:watchable_type, :watchable_id] }
   validates :watchable_type, inclusion: { in: WATCHABLE_TYPES }
+
+  before_validation :fetch_watchable
+
+  private
+
+  def fetch_watchable
+    return if watchable || !watchable_id || !watchable_type || WATCHABLE_TYPES.exclude?(watchable_type)
+
+    self.watchable = watchable_type.safe_constantize.find_by(id: watchable_id)
+  end
 end
 
 # == Schema Information

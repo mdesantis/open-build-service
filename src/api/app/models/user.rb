@@ -3,6 +3,7 @@ require 'api_error'
 
 class User < ApplicationRecord
   include CanRenderModel
+  include User::WatchlistConcern
   include User::WatchlistProjectsConcern
 
   # Keep in sync with states defined in db/schema.rb
@@ -25,6 +26,7 @@ class User < ApplicationRecord
       )
     end
   end
+  has_many :watchlist_packages, through: :watchlist_items, source: :watchable, source_type: 'Package'
   has_many :watchlist_projects, through: :watchlist_items, source: :watchable, source_type: 'Project'
   has_many :groups_users, inverse_of: :user
   has_many :roles_users, inverse_of: :user

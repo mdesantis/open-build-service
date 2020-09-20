@@ -4,25 +4,31 @@
       %button.navbar-toggler{ 'type': 'button', data: { toggle: 'watchlist' }, aria: { expanded: 'false', label: 'Toggle navigation' } }
         %i.fas.fa-times
 
-    - if params[:project]
-      .nav-item.pb-2.mb-4.border-bottom.border-gray-500
-        .h6.text-word-break-all.text-light Project #{params[:project]}
-        - if User.session!.watchlist_watches_project_by_name? params[:project]
-          = link_to watchlist_items_by_project_name_path(project_name: params[:project]), { method: :delete, remote: true }, { class: 'nav-link' } do
-            %p.mb-0.text-light
-              %i.fas.fa-times-circle
-              %span Remove this project from Watchlist
-        - else
-          = link_to watchlist_items_by_project_name_path(project_name: params[:project]), { method: :post, remote: true }, { class: 'nav-link' } do
-            %p.mb-0.text-light
-              %i.fas.fa-plus-circle
-              %span Watch this project
+    - if @watchable_record.is_a?(Package)
+      = render 'layouts/webui/responsive_ux/watchlist/toogle_package'
+    - elsif params[:project]
+      = render 'layouts/webui/responsive_ux/watchlist/toogle_project'
 
-    %h5.pt-2.text-light Projects you are watching
+    %h5.pt-2.text-light Items you are watching
 
-    .list-group.list-group-flush
-      - User.session!.watched_project_names.each do |project|
-        .bg-dark.list-group-item.border-0
-          = link_to project_show_path(project), class: 'text-word-break-all' do
-            %i.fas.fa-cubes
-            #{project}
+    - if User.session!.watchlist_packages.present?
+
+      %h6.pt-2.text-light Packages
+
+      .list-group.list-group-flush
+        - User.session!.watchlist_packages.order(:name).pluck(:name).each do |package_name|
+          .bg-dark.list-group-item.border-0
+            = link_to package_show_path(package_name), class: 'text-word-break-all' do
+              %i.fas.fa-cubes
+              #{package_name}
+    
+    - if User.session!.watched_project_names.present?
+
+      %h6.pt-2.text-light Projects
+
+      .list-group.list-group-flush
+        - User.session!.watched_project_names.each do |project|
+          .bg-dark.list-group-item.border-0
+            = link_to project_show_path(project), class: 'text-word-break-all' do
+              %i.fas.fa-cubes
+              #{project}

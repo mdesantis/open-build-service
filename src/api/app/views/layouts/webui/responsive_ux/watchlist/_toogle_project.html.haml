@@ -1,0 +1,13 @@
+.nav-item.pb-2.mb-4.border-bottom.border-gray-500
+  .h6.text-word-break-all.text-light Project #{params[:project]}
+
+  - if User.session!.watchlist_watches_project_by_name? params[:project]
+    = link_to watchlist_items_by_project_name_path(project_name: params[:project]), { method: :delete, remote: true }, { class: 'nav-link' } do
+      %p.mb-0.text-light
+        %i.fas.fa-times-circle
+        %span Remove this project from Watchlist
+  - else
+    = link_to watchlist_items_by_project_name_path(project_name: params[:project]), { method: :post, remote: true }, { class: 'nav-link' } do
+      %p.mb-0.text-light
+        %i.fas.fa-plus-circle
+        %span Watch this project

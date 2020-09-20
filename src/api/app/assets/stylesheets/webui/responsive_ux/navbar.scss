@@ -45,6 +45,21 @@
           width: 20px;
         }
       }
+
+      form.button_link_to button {
+        background-color: transparent;
+        border: 0 none;
+        color: $gray-300;
+        padding: 0;
+
+        &:hover {
+          color: white;
+          text-decoration: underline;
+          i.fas {
+            filter: brightness(0.7);
+          }
+        }
+      }
     }
   }
 }

@@ -2,6 +2,7 @@ class Webui::PackageController < Webui::WebuiController
   include ParsePackageDiff
   include Webui::PackageHelper
   include Webui::ManageRelationships
+  include Webui::ManageWatchlistConcern
   include BuildLogSupport
 
   before_action :set_project, only: [:show, :edit, :update, :index, :users, :dependency, :binary, :binaries, :requests, :statistics, :revisions,
@@ -34,6 +35,8 @@ class Webui::PackageController < Webui::WebuiController
   before_action :handle_parameters_for_rpmlint_log, only: [:rpmlint_log]
 
   prepend_before_action :lockout_spiders, only: [:revisions, :dependency, :rdiff, :binary, :binaries, :requests, :binary_download]
+
+  before_action :set_watchlist_resources, only: [:show]
 
   after_action :verify_authorized, only: [:new, :create, :remove_file, :remove, :abort_build, :trigger_rebuild, :wipe_binaries, :save_meta, :save, :abort_build]
 
